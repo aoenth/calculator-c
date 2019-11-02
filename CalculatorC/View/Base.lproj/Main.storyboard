@@ -54,7 +54,7 @@
                                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="i3a-dS-4qM">
                                                         <rect key="frame" x="0.0" y="82" width="310.5" height="81.5"/>
                                                         <subviews>
-                                                            <button opaque="NO" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AMV-hg-Wjn">
+                                                            <button opaque="NO" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AMV-hg-Wjn" customClass="CCButton">
                                                                 <rect key="frame" x="0.0" y="0.0" width="103.5" height="81.5"/>
                                                                 <state key="normal" title="7"/>
                                                                 <connections>
