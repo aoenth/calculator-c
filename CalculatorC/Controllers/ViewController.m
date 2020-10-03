@@ -60,12 +60,11 @@
 - (IBAction)equalButtonPressed:(id)sender {
     if (_numbersForOperations.count == 0) { return; }
     [_numbersForOperations addObject:_displayedNumber];
-    NSNumber *temp = [NSNumber numberWithInt:0];
-    NSNumber *firstNumber = [_numbersForOperations firstObject];
+    NSNumber *temp = [_numbersForOperations firstObject];
     for (int i = 0; i < _numbersForOperations.count - 1; i++) {
         int operation = [_pendingOperations[i] intValue];
         NSNumber *secondNumber = _numbersForOperations[i + 1];
-        temp = [self calculateAnswer:firstNumber
+        temp = [self calculateAnswer:temp
                        withOperation:operation
                            andSecond:secondNumber];
     }
