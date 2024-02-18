@@ -11,7 +11,7 @@
 @interface ViewController ()
 
 @property (weak, nonatomic) IBOutlet UILabel *numberLabel;
-@property NSNumber *displayedNumber;
+@property (strong, nonatomic) NSNumber *displayedNumber;
 @property NSMutableArray<NSNumber *> *pendingOperations;
 @property NSMutableArray<NSNumber *> *numbersForOperations;
 @property bool isLastKeypressOperation;
@@ -19,22 +19,71 @@
 
 @implementation ViewController
 
-- (void)updateDisplay:(NSNumber *)number {
-    _displayedNumber = number;
-    _numberLabel.text = [_displayedNumber stringValue];
+- (void)setupUI
+{
+    for (UIView *view in self.view.subviews) {
+        [view removeFromSuperview];
+    }
+
+    UIStackView *left = UIStackView.new;
+
+    left.translatesAutoresizingMaskIntoConstraints = NO;
+    left.axis = UILayoutConstraintAxisVertical;
+    UIStackView *currentRow = UIStackView.new;
+
+    for (NSInteger i = 1; i < 10; i++) {
+        NSString *title = [NSString stringWithFormat:@"%ld", i];
+
+        UIButton *button = [self makeButton:title];
+        button.tag = i;
+
+        [currentRow addArrangedSubview:button];
+        if (i % 3 == 0) {
+            [left insertArrangedSubview:currentRow atIndex:0];
+            currentRow = UIStackView.new;
+        }
+    }
+
+    currentRow = nil;
+
+    UIButton *zeroButton = [self makeButton:@"0"];
+    [left addArrangedSubview:zeroButton];
+
+    [self.view addSubview:left];
+    [NSLayoutConstraint activateConstraints:@[
+        [left.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
+        [left.centerXAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.centerXAnchor],
+    ]];
+
+    UIButton *clearButton = [self makeButton:@"C"];
+    [clearButton addTarget:self action:@selector(clear:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [left insertArrangedSubview:clearButton atIndex:0];
+}
+
+- (UIButton *)makeButton:(NSString *)title
+{
+    UIButton *button = UIButton.new;
+    [button setTitle:title forState:UIControlStateNormal];
+    [button setTitleColor:UIColor.labelColor forState:UIControlStateNormal];
+    return button;
+}
+
+- (void)setDisplayedNumber:(NSNumber *)displayedNumber
+{
+    self.numberLabel.text = displayedNumber.stringValue;
 }
 
 - (void)clearMemory {
     [_pendingOperations removeAllObjects];
     [_numbersForOperations removeAllObjects];
     _isLastKeypressOperation = NO;
-    _displayedNumber = [NSNumber numberWithInt:0];
+    self.displayedNumber = [NSNumber numberWithInt:0];
 }
 
 - (IBAction)clear:(id)sender {
-    _displayedNumber = [NSNumber numberWithInt:0];
+    self.displayedNumber = [NSNumber numberWithInt:0];
     [self clearMemory];
-    [self updateDisplay:[NSNumber numberWithInt:0]];
 }
 
 - (NSNumber *)stringToNumber:(NSString *)string {
@@ -45,7 +94,7 @@
 
 - (IBAction)numberButtonPressed:(id)sender {
     if (_isLastKeypressOperation) {
-        _displayedNumber = [NSNumber numberWithInt:0];
+        self.displayedNumber = [NSNumber numberWithInt:0];
     }
     UIButton *buttonPressed = (UIButton*) sender;
     NSString *string = [_displayedNumber stringValue];
@@ -53,7 +102,7 @@
     string = [string stringByAppendingString: newInput];
 
     NSNumber *newNumber = [self stringToNumber:string];
-    [self updateDisplay:newNumber];
+    self.displayedNumber = newNumber;
     _isLastKeypressOperation = NO;
 }
 
@@ -68,8 +117,7 @@
                        withOperation:operation
                            andSecond:secondNumber];
     }
-    [self updateDisplay:temp];
-    [self clearMemory];
+    self.displayedNumber = temp;
 }
 
 - (NSNumber *)calculateAnswer:(NSNumber *)first withOperation:(int)operation andSecond:(NSNumber *)second {
@@ -109,6 +157,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setupUI];
     [self clear:nil];
 }
 
