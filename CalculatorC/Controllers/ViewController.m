@@ -24,7 +24,18 @@
     for (UIView *view in self.view.subviews) {
         [view removeFromSuperview];
     }
+    
+    UIView *left = [self makeLeftPortion];
 
+    [self.view addSubview:left];
+    [NSLayoutConstraint activateConstraints:@[
+        [left.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
+        [left.centerXAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.centerXAnchor],
+    ]];
+}
+
+- (UIView *)makeLeftPortion
+{
     UIStackView *left = UIStackView.new;
 
     left.translatesAutoresizingMaskIntoConstraints = NO;
@@ -49,16 +60,12 @@
     UIButton *zeroButton = [self makeButton:@"0"];
     [left addArrangedSubview:zeroButton];
 
-    [self.view addSubview:left];
-    [NSLayoutConstraint activateConstraints:@[
-        [left.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
-        [left.centerXAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.centerXAnchor],
-    ]];
-
     UIButton *clearButton = [self makeButton:@"C"];
     [clearButton addTarget:self action:@selector(clear:) forControlEvents:UIControlEventTouchUpInside];
-    
+
     [left insertArrangedSubview:clearButton atIndex:0];
+
+    return left;
 }
 
 - (UIButton *)makeButton:(NSString *)title
