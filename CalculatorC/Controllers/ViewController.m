@@ -24,24 +24,7 @@
     self.view.backgroundColor = UIColor.systemBackgroundColor;
 
     UIView *left = [self makeLeftPortion];
-
-    UIStackView *right = UIStackView.new;
-    right.translatesAutoresizingMaskIntoConstraints = NO;
-    right.distribution = UIStackViewDistributionFillEqually;
-    right.spacing = 8;
-    right.axis = UILayoutConstraintAxisVertical;
-
-    NSArray *operationTags = @[@3, @2, @1, @0];
-    NSArray *operationButtons = @[@"➗", @"✖️", @"➖", @"➕"];
-
-    for (NSInteger i = 0; i < operationTags.count; i++) {
-        NSString *symbol = operationButtons[i];
-        NSNumber *tag = operationTags[i];
-        UIButton *button = [self makeOperationButton:symbol];
-        [button addTarget:self action:@selector(operationButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        button.tag = tag.intValue;
-        [right addArrangedSubview:button];
-    }
+    UIView *right = [self makeOperationButtons];
 
     UIStackView *topKeypadStack = UIStackView.new;
     topKeypadStack.spacing = 8;
@@ -55,7 +38,6 @@
     numberLabel.font = [UIFont systemFontOfSize:70];
     numberLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:numberLabel];
-
 
     self.numberLabel = numberLabel;
     
@@ -90,6 +72,29 @@
         [right.widthAnchor constraintEqualToAnchor:mainKeypadStack.widthAnchor multiplier:0.25 constant:-8],
     ]];
 }
+
+- (UIView *)makeOperationButtons
+{
+    UIStackView *right = UIStackView.new;
+    right.translatesAutoresizingMaskIntoConstraints = NO;
+    right.distribution = UIStackViewDistributionFillEqually;
+    right.spacing = 8;
+    right.axis = UILayoutConstraintAxisVertical;
+
+    NSArray *operationTags = @[@3, @2, @1, @0];
+    NSArray *operationButtons = @[@"➗", @"✖️", @"➖", @"➕"];
+
+    for (NSInteger i = 0; i < operationTags.count; i++) {
+        NSString *symbol = operationButtons[i];
+        NSNumber *tag = operationTags[i];
+        UIButton *button = [self makeOperationButton:symbol];
+        [button addTarget:self action:@selector(operationButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        button.tag = tag.intValue;
+        [right addArrangedSubview:button];
+    }
+    return right;
+}
+
 
 - (UIView *)makeLeftPortion
 {
@@ -132,6 +137,7 @@
     UIButton *button = UIButton.new;
     [button setTitle:title forState:UIControlStateNormal];
     [button setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+    [button setTitleColor:UIColor.systemRedColor forState:UIControlStateHighlighted];
     button.backgroundColor = UIColor.darkGrayColor;
     [button.layer setBorderWidth:1];
     [button.layer setCornerRadius:5];
@@ -211,9 +217,9 @@
     }
 }
 
-- (IBAction)operationButtonPressed:(id)sender {
+- (void)operationButtonPressed:(id)sender {
     UIButton *buttonPressed = (UIButton*) sender;
-    
+
     if (_pendingOperations == nil) {
         _pendingOperations = [[NSMutableArray<NSNumber *> alloc] init];
     }
