@@ -12,8 +12,9 @@
 
 @property (strong, nonatomic) UILabel *numberLabel;
 @property (strong, nonatomic) NSNumber *displayedNumber;
-@property NSMutableArray<NSNumber *> *pendingOperations;
-@property NSMutableArray<NSNumber *> *numbersForOperations;
+@property NSInteger operator;
+@property (strong, nonatomic) NSNumber *firstNumber;
+@property (strong, nonatomic) NSNumber *secondNumber;
 @property bool isLastKeypressOperation;
 @end
 
@@ -160,8 +161,9 @@
 }
 
 - (void)clearMemory {
-    [self.pendingOperations removeAllObjects];
-    [self.numbersForOperations removeAllObjects];
+    self.operator = 0;
+    self.firstNumber = @0;
+    self.secondNumber = @0;
     self.isLastKeypressOperation = NO;
     self.displayedNumber = @0;
 }
@@ -185,34 +187,22 @@
     NSInteger i = self.displayedNumber.integerValue * 10 + buttonPressed.tag;
     self.displayedNumber = [[NSNumber alloc] initWithInteger:i];
 
-    [self.self.numbersForOperations addObject:self.displayedNumber];
-
     self.isLastKeypressOperation = NO;
+    
+    if (self.isLastKeypressOperation) {
+        self.firstNumber = self.displayedNumber;
+    } else {
+        self.secondNumber = self.displayedNumber;
+    }
 }
 
 - (void)equalButtonPressed:(id)sender {
-    if (self.numbersForOperations.count == 0) { return; }
-
-    NSNumber *temp;
-
-    if (self.numbersForOperations.count == 1) {
-        temp = self.displayedNumber;
-    } else {
-        temp = self.numbersForOperations.firstObject;
-        [self.numbersForOperations removeObjectAtIndex:0];
-    }
-
-    int operation = [self.pendingOperations.lastObject intValue];
-    NSNumber *secondNumber = self.numbersForOperations.lastObject;
-    temp = [self calculateAnswer:temp
-                   withOperation:operation
-                       andSecond:secondNumber];
-
-
-    self.displayedNumber = temp;
+    self.displayedNumber = [self calculateAnswer:self.firstNumber
+                                   withOperation:self.operator
+                                       andSecond:self.secondNumber];
 }
 
-- (NSNumber *)calculateAnswer:(NSNumber *)first withOperation:(int)operation andSecond:(NSNumber *)second {
+- (NSNumber *)calculateAnswer:(NSNumber *)first withOperation:(NSInteger)operation andSecond:(NSNumber *)second {
     switch (operation) {
         case 0:
             return [NSNumber numberWithDouble: [first doubleValue] + [second doubleValue]];
@@ -230,28 +220,17 @@
 - (void)operationButtonPressed:(id)sender {
     UIButton *buttonPressed = (UIButton*) sender;
 
-    if (self.pendingOperations == nil) {
-        self.pendingOperations = [[NSMutableArray<NSNumber *> alloc] init];
-    }
-    
-    if (self.isLastKeypressOperation) {
-        [self.pendingOperations removeLastObject];
-    } else {
-        if (self.numbersForOperations == nil) {
-            self.numbersForOperations = [[NSMutableArray<NSNumber *> alloc] init];
-        }
-        self.isLastKeypressOperation = YES;
-        [self.numbersForOperations addObject:_displayedNumber];
-    }
-    [self.pendingOperations addObject:[NSNumber numberWithLong:buttonPressed.tag]];
-}
+    self.firstNumber = self.displayedNumber;
 
+    self.operator = buttonPressed.tag;
+
+    self.isLastKeypressOperation = YES;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupUI];
     [self clear:nil];
 }
-
 
 @end
