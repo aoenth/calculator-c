@@ -46,6 +46,8 @@
     bottomKeypadStack.distribution = UIStackViewDistributionFillEqually;
 
     UIButton *zeroButton = [self makeButton:@"0"];
+    zeroButton.tag = 0;
+    [zeroButton addTarget:self action:@selector(numberButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [bottomKeypadStack addArrangedSubview:zeroButton];
 
     UIButton *equalButton = [self makeOperationButton:@"🟰"];
@@ -158,9 +160,9 @@
 }
 
 - (void)clearMemory {
-    [_pendingOperations removeAllObjects];
-    [_numbersForOperations removeAllObjects];
-    _isLastKeypressOperation = NO;
+    [self.pendingOperations removeAllObjects];
+    [self.numbersForOperations removeAllObjects];
+    self.isLastKeypressOperation = NO;
     self.displayedNumber = @0;
 }
 
@@ -175,30 +177,38 @@
 }
 
 - (void)numberButtonPressed:(id)sender {
-    if (_isLastKeypressOperation) {
+    if (self.isLastKeypressOperation) {
         self.displayedNumber = [NSNumber numberWithInt:0];
     }
     UIButton *buttonPressed = (UIButton*) sender;
-    NSString *string = [self.displayedNumber stringValue];
-    NSString *newInput = [[NSNumber numberWithLong:buttonPressed.tag] stringValue];
-    string = [string stringByAppendingString: newInput];
 
-    NSNumber *newNumber = [self stringToNumber:string];
-    self.displayedNumber = newNumber;
-    _isLastKeypressOperation = NO;
+    NSInteger i = self.displayedNumber.integerValue * 10 + buttonPressed.tag;
+    self.displayedNumber = [[NSNumber alloc] initWithInteger:i];
+
+    [self.self.numbersForOperations addObject:self.displayedNumber];
+
+    self.isLastKeypressOperation = NO;
 }
 
 - (void)equalButtonPressed:(id)sender {
-    if (_numbersForOperations.count == 0) { return; }
-    [_numbersForOperations addObject:_displayedNumber];
-    NSNumber *temp = [_numbersForOperations firstObject];
-    for (int i = 0; i < _numbersForOperations.count - 1; i++) {
-        int operation = [_pendingOperations[i] intValue];
-        NSNumber *secondNumber = _numbersForOperations[i + 1];
-        temp = [self calculateAnswer:temp
-                       withOperation:operation
-                           andSecond:secondNumber];
+    if (self.numbersForOperations.count == 0) { return; }
+
+    NSNumber *temp;
+
+    if (self.numbersForOperations.count == 1) {
+        temp = self.displayedNumber;
+    } else {
+        temp = self.numbersForOperations.firstObject;
+        [self.numbersForOperations removeObjectAtIndex:0];
     }
+
+    int operation = [self.pendingOperations.lastObject intValue];
+    NSNumber *secondNumber = self.numbersForOperations.lastObject;
+    temp = [self calculateAnswer:temp
+                   withOperation:operation
+                       andSecond:secondNumber];
+
+
     self.displayedNumber = temp;
 }
 
@@ -220,20 +230,20 @@
 - (void)operationButtonPressed:(id)sender {
     UIButton *buttonPressed = (UIButton*) sender;
 
-    if (_pendingOperations == nil) {
-        _pendingOperations = [[NSMutableArray<NSNumber *> alloc] init];
+    if (self.pendingOperations == nil) {
+        self.pendingOperations = [[NSMutableArray<NSNumber *> alloc] init];
     }
     
-    if (_isLastKeypressOperation) {
-        [_pendingOperations removeLastObject];
+    if (self.isLastKeypressOperation) {
+        [self.pendingOperations removeLastObject];
     } else {
-        if (_numbersForOperations == nil) {
-            _numbersForOperations = [[NSMutableArray<NSNumber *> alloc] init];
+        if (self.numbersForOperations == nil) {
+            self.numbersForOperations = [[NSMutableArray<NSNumber *> alloc] init];
         }
-        _isLastKeypressOperation = YES;
-        [_numbersForOperations addObject:_displayedNumber];
+        self.isLastKeypressOperation = YES;
+        [self.numbersForOperations addObject:_displayedNumber];
     }
-    [_pendingOperations addObject:[NSNumber numberWithLong:buttonPressed.tag]];
+    [self.pendingOperations addObject:[NSNumber numberWithLong:buttonPressed.tag]];
 }
 
 
