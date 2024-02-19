@@ -10,12 +10,10 @@
 		0A7BFFB8236CFB5D002728F3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7BFFB7236CFB5D002728F3 /* AppDelegate.m */; };
 		0A7BFFBB236CFB5D002728F3 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7BFFBA236CFB5D002728F3 /* SceneDelegate.m */; };
 		0A7BFFBE236CFB5D002728F3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7BFFBD236CFB5D002728F3 /* ViewController.m */; };
-		0A7BFFC1236CFB5D002728F3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A7BFFBF236CFB5D002728F3 /* Main.storyboard */; };
 		0A7BFFC3236CFB5E002728F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A7BFFC2236CFB5E002728F3 /* Assets.xcassets */; };
 		0A7BFFC6236CFB5E002728F3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A7BFFC4236CFB5E002728F3 /* LaunchScreen.storyboard */; };
 		0A7BFFC9236CFB5E002728F3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7BFFC8236CFB5E002728F3 /* main.m */; };
-		0A7BFFD3236DB7E2002728F3 /* CCButton.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A7BFFD2236DB7E2002728F3 /* CCButton.xib */; };
-		0A7BFFD6236DB941002728F3 /* CCButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A7BFFD5236DB941002728F3 /* CCButton.m */; };
+		0ACA56022B83046C00FD269E /* MathOperation.h in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA56012B83046C00FD269E /* MathOperation.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,14 +24,11 @@
 		0A7BFFBA236CFB5D002728F3 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		0A7BFFBC236CFB5D002728F3 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		0A7BFFBD236CFB5D002728F3 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		0A7BFFC0236CFB5D002728F3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0A7BFFC2236CFB5E002728F3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A7BFFC5236CFB5E002728F3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A7BFFC7236CFB5E002728F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A7BFFC8236CFB5E002728F3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		0A7BFFD2236DB7E2002728F3 /* CCButton.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CCButton.xib; sourceTree = "<group>"; };
-		0A7BFFD4236DB941002728F3 /* CCButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCButton.h; sourceTree = "<group>"; };
-		0A7BFFD5236DB941002728F3 /* CCButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCButton.m; sourceTree = "<group>"; };
+		0ACA56012B83046C00FD269E /* MathOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MathOperation.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +61,7 @@
 		0A7BFFB5236CFB5D002728F3 /* CalculatorC */ = {
 			isa = PBXGroup;
 			children = (
+				0ACA56032B83047300FD269E /* Models */,
 				0A7BFFCF236DB785002728F3 /* Delegates */,
 				0A7BFFD0236DB794002728F3 /* Controllers */,
 				0A7BFFD1236DB7A0002728F3 /* View */,
@@ -99,13 +95,17 @@
 		0A7BFFD1236DB7A0002728F3 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				0A7BFFBF236CFB5D002728F3 /* Main.storyboard */,
 				0A7BFFC4236CFB5E002728F3 /* LaunchScreen.storyboard */,
-				0A7BFFD2236DB7E2002728F3 /* CCButton.xib */,
-				0A7BFFD4236DB941002728F3 /* CCButton.h */,
-				0A7BFFD5236DB941002728F3 /* CCButton.m */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		0ACA56032B83047300FD269E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0ACA56012B83046C00FD269E /* MathOperation.h */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,8 +167,6 @@
 			files = (
 				0A7BFFC6236CFB5E002728F3 /* LaunchScreen.storyboard in Resources */,
 				0A7BFFC3236CFB5E002728F3 /* Assets.xcassets in Resources */,
-				0A7BFFC1236CFB5D002728F3 /* Main.storyboard in Resources */,
-				0A7BFFD3236DB7E2002728F3 /* CCButton.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,8 +178,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A7BFFBE236CFB5D002728F3 /* ViewController.m in Sources */,
-				0A7BFFD6236DB941002728F3 /* CCButton.m in Sources */,
 				0A7BFFB8236CFB5D002728F3 /* AppDelegate.m in Sources */,
+				0ACA56022B83046C00FD269E /* MathOperation.h in Sources */,
 				0A7BFFC9236CFB5E002728F3 /* main.m in Sources */,
 				0A7BFFBB236CFB5D002728F3 /* SceneDelegate.m in Sources */,
 			);
@@ -190,14 +188,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		0A7BFFBF236CFB5D002728F3 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0A7BFFC0236CFB5D002728F3 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		0A7BFFC4236CFB5E002728F3 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

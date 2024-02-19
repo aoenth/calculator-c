@@ -10,7 +10,7 @@
 
 @interface ViewController ()
 
-@property (weak, nonatomic) IBOutlet UILabel *numberLabel;
+@property (strong, nonatomic) UILabel *numberLabel;
 @property (strong, nonatomic) NSNumber *displayedNumber;
 @property NSMutableArray<NSNumber *> *pendingOperations;
 @property NSMutableArray<NSNumber *> *numbersForOperations;
@@ -21,23 +21,58 @@
 
 - (void)setupUI
 {
-    for (UIView *view in self.view.subviews) {
-        [view removeFromSuperview];
-    }
-    
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+
     UIView *left = [self makeLeftPortion];
 
-    [self.view addSubview:left];
+    UIStackView *right = UIStackView.new;
+    right.translatesAutoresizingMaskIntoConstraints = NO;
+    right.distribution = UIStackViewDistributionFillEqually;
+    right.spacing = 8;
+    right.axis = UILayoutConstraintAxisVertical;
+
+    NSArray *operationButtons = @[@"➗", @"✖️", @"➖", @"➕", @"🟰"];
+
+    for (NSString *symbol in operationButtons) {
+        UIButton *button = [self makeButton:symbol];
+        [button addTarget:self action:@selector(operationButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [right addArrangedSubview:button];
+    }
+
+    UIStackView *main = UIStackView.new;
+    main.spacing = 8;
+    main.translatesAutoresizingMaskIntoConstraints = NO;
+
+    [main addArrangedSubview:left];
+    [main addArrangedSubview:right];
+    [self.view addSubview:main];
     [NSLayoutConstraint activateConstraints:@[
-        [left.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor],
-        [left.centerXAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.centerXAnchor],
+        [main.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:8],
+        [main.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-8],
+        [main.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-8],
+        [main.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
+        [main.heightAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.heightAnchor multiplier:0.7],
+        [right.widthAnchor constraintEqualToAnchor:main.widthAnchor multiplier:0.25 constant:-8]
     ]];
+
+    UILabel *numberLabel = UILabel.new;
+    numberLabel.textColor = UIColor.labelColor;
+    numberLabel.font = [UIFont systemFontOfSize:70];
+    numberLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:numberLabel];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [numberLabel.bottomAnchor constraintEqualToAnchor:main.topAnchor constant:-8],
+        [numberLabel.trailingAnchor constraintEqualToAnchor:main.trailingAnchor],
+    ]];
+    self.numberLabel = numberLabel;
 }
 
 - (UIView *)makeLeftPortion
 {
     UIStackView *left = UIStackView.new;
-
+    left.distribution = UIStackViewDistributionFillEqually;
+    left.spacing = 8;
     left.translatesAutoresizingMaskIntoConstraints = NO;
     left.axis = UILayoutConstraintAxisVertical;
     UIStackView *currentRow = UIStackView.new;
@@ -47,9 +82,12 @@
 
         UIButton *button = [self makeButton:title];
         button.tag = i;
+        [button addTarget:self action:@selector(numberButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
         [currentRow addArrangedSubview:button];
         if (i % 3 == 0) {
+            currentRow.distribution = UIStackViewDistributionFillEqually;
+            currentRow.spacing = 8;
             [left insertArrangedSubview:currentRow atIndex:0];
             currentRow = UIStackView.new;
         }
@@ -72,12 +110,16 @@
 {
     UIButton *button = UIButton.new;
     [button setTitle:title forState:UIControlStateNormal];
-    [button setTitleColor:UIColor.labelColor forState:UIControlStateNormal];
+    [button setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+    button.backgroundColor = UIColor.darkGrayColor;
+    [button.layer setBorderWidth:1];
+    [button.layer setCornerRadius:5];
     return button;
 }
 
 - (void)setDisplayedNumber:(NSNumber *)displayedNumber
 {
+    _displayedNumber = displayedNumber;
     self.numberLabel.text = displayedNumber.stringValue;
 }
 
@@ -85,11 +127,10 @@
     [_pendingOperations removeAllObjects];
     [_numbersForOperations removeAllObjects];
     _isLastKeypressOperation = NO;
-    self.displayedNumber = [NSNumber numberWithInt:0];
+    self.displayedNumber = @0;
 }
 
 - (IBAction)clear:(id)sender {
-    self.displayedNumber = [NSNumber numberWithInt:0];
     [self clearMemory];
 }
 
@@ -104,7 +145,7 @@
         self.displayedNumber = [NSNumber numberWithInt:0];
     }
     UIButton *buttonPressed = (UIButton*) sender;
-    NSString *string = [_displayedNumber stringValue];
+    NSString *string = [self.displayedNumber stringValue];
     NSString *newInput = [[NSNumber numberWithLong:buttonPressed.tag] stringValue];
     string = [string stringByAppendingString: newInput];
 
