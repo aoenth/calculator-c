@@ -140,11 +140,40 @@
     UIButton *button = UIButton.new;
     [button setTitle:title forState:UIControlStateNormal];
     [button setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-    [button setTitleColor:UIColor.systemRedColor forState:UIControlStateHighlighted];
     button.backgroundColor = UIColor.darkGrayColor;
+    [button setBackgroundImage:[self buttonHighlightedBackgroundImage] forState:UIControlStateHighlighted];
     [button.layer setBorderWidth:1];
     [button.layer setCornerRadius:5];
     return button;
+}
+
+- (UIImage *)buttonHighlightedBackgroundImage
+{
+    // Define the size of the image
+    CGSize size = CGSizeMake(1, 1);
+
+    // Create a graphics context
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+
+    // Get the current graphics context
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    if (context == NULL) {
+        UIGraphicsEndImageContext();
+        return nil;
+    }
+
+    [[UIColor systemRedColor] setFill];
+
+    // Fill the context with the color
+    CGRect rect = CGRectMake(0, 0, size.width, size.height);
+    CGContextFillRect(context, rect);
+
+    // Create an image from the context
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+
+    // End the graphics context
+    UIGraphicsEndImageContext();
+    return image;
 }
 
 - (UIButton *)makeOperationButton:(NSString *)title
