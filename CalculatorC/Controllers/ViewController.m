@@ -31,29 +31,24 @@
     right.spacing = 8;
     right.axis = UILayoutConstraintAxisVertical;
 
-    NSArray *operationButtons = @[@"➗", @"✖️", @"➖", @"➕", @"🟰"];
+    NSArray *operationTags = @[@3, @2, @1, @0];
+    NSArray *operationButtons = @[@"➗", @"✖️", @"➖", @"➕"];
 
-    for (NSString *symbol in operationButtons) {
-        UIButton *button = [self makeButton:symbol];
+    for (NSInteger i = 0; i < operationTags.count; i++) {
+        NSString *symbol = operationButtons[i];
+        NSNumber *tag = operationTags[i];
+        UIButton *button = [self makeOperationButton:symbol];
         [button addTarget:self action:@selector(operationButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        button.tag = tag.intValue;
         [right addArrangedSubview:button];
     }
 
-    UIStackView *main = UIStackView.new;
-    main.spacing = 8;
-    main.translatesAutoresizingMaskIntoConstraints = NO;
+    UIStackView *topKeypadStack = UIStackView.new;
+    topKeypadStack.spacing = 8;
+    topKeypadStack.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [main addArrangedSubview:left];
-    [main addArrangedSubview:right];
-    [self.view addSubview:main];
-    [NSLayoutConstraint activateConstraints:@[
-        [main.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:8],
-        [main.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-8],
-        [main.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-8],
-        [main.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
-        [main.heightAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.heightAnchor multiplier:0.7],
-        [right.widthAnchor constraintEqualToAnchor:main.widthAnchor multiplier:0.25 constant:-8]
-    ]];
+    [topKeypadStack addArrangedSubview:left];
+    [topKeypadStack addArrangedSubview:right];
 
     UILabel *numberLabel = UILabel.new;
     numberLabel.textColor = UIColor.labelColor;
@@ -61,11 +56,39 @@
     numberLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:numberLabel];
 
-    [NSLayoutConstraint activateConstraints:@[
-        [numberLabel.bottomAnchor constraintEqualToAnchor:main.topAnchor constant:-8],
-        [numberLabel.trailingAnchor constraintEqualToAnchor:main.trailingAnchor],
-    ]];
+
     self.numberLabel = numberLabel;
+    
+    UIStackView *bottomKeypadStack = UIStackView.new;
+    bottomKeypadStack.spacing = 8;
+    bottomKeypadStack.distribution = UIStackViewDistributionFillEqually;
+
+    UIButton *zeroButton = [self makeButton:@"0"];
+    [bottomKeypadStack addArrangedSubview:zeroButton];
+
+    UIButton *equalButton = [self makeOperationButton:@"🟰"];
+    [bottomKeypadStack addArrangedSubview:equalButton];
+    [equalButton addTarget:self action:@selector(equalButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+
+    UIStackView *mainKeypadStack = UIStackView.new;
+    mainKeypadStack.distribution = UIStackViewDistributionFillProportionally;
+    mainKeypadStack.spacing = 8;
+    mainKeypadStack.translatesAutoresizingMaskIntoConstraints = NO;
+    mainKeypadStack.axis = UILayoutConstraintAxisVertical;
+    [mainKeypadStack addArrangedSubview:topKeypadStack];
+    [mainKeypadStack addArrangedSubview:bottomKeypadStack];
+
+    [self.view addSubview:mainKeypadStack];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [mainKeypadStack.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:8],
+        [mainKeypadStack.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-8],
+        [mainKeypadStack.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-8],
+        [mainKeypadStack.heightAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.heightAnchor multiplier:0.7],
+        [numberLabel.bottomAnchor constraintEqualToAnchor:mainKeypadStack.topAnchor constant:-8],
+        [numberLabel.trailingAnchor constraintEqualToAnchor:mainKeypadStack.trailingAnchor],
+        [right.widthAnchor constraintEqualToAnchor:mainKeypadStack.widthAnchor multiplier:0.25 constant:-8],
+    ]];
 }
 
 - (UIView *)makeLeftPortion
@@ -95,8 +118,6 @@
 
     currentRow = nil;
 
-    UIButton *zeroButton = [self makeButton:@"0"];
-    [left addArrangedSubview:zeroButton];
 
     UIButton *clearButton = [self makeButton:@"C"];
     [clearButton addTarget:self action:@selector(clear:) forControlEvents:UIControlEventTouchUpInside];
@@ -117,6 +138,13 @@
     return button;
 }
 
+- (UIButton *)makeOperationButton:(NSString *)title
+{
+    UIButton *button = [self makeButton:title];
+    button.backgroundColor = UIColor.lightGrayColor;
+    return button;
+}
+
 - (void)setDisplayedNumber:(NSNumber *)displayedNumber
 {
     _displayedNumber = displayedNumber;
@@ -130,7 +158,7 @@
     self.displayedNumber = @0;
 }
 
-- (IBAction)clear:(id)sender {
+- (void)clear:(id)sender {
     [self clearMemory];
 }
 
@@ -140,7 +168,7 @@
     return (NSNumber *) [f numberFromString:string];
 }
 
-- (IBAction)numberButtonPressed:(id)sender {
+- (void)numberButtonPressed:(id)sender {
     if (_isLastKeypressOperation) {
         self.displayedNumber = [NSNumber numberWithInt:0];
     }
@@ -154,7 +182,7 @@
     _isLastKeypressOperation = NO;
 }
 
-- (IBAction)equalButtonPressed:(id)sender {
+- (void)equalButtonPressed:(id)sender {
     if (_numbersForOperations.count == 0) { return; }
     [_numbersForOperations addObject:_displayedNumber];
     NSNumber *temp = [_numbersForOperations firstObject];
